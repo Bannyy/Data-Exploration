@@ -1,0 +1,32 @@
+#required libraries
+require(sqldf)
+require(car)
+require(Hmisc)
+
+#set working directory
+#setwd("C:/Users/abhishek/Documents")
+
+#using cancer dataset for illustration
+basedata<-read.csv("cancer_reg.csv")
+View(basedata)
+##sampling
+set.seed(100)
+samp <- sample(nrow(basedata), 0.7 * nrow(basedata))
+train <- basedata[samp, ]
+test <- basedata[-samp, ]
+
+#######Data treatment starts####
+#missing values can be treated using mean,median,mode or regressing for null values
+#How to decide which statistics can be used for missing treatment?
+#get missing values by columns
+data_miss<-data.frame(var=character(ncol(train)),nmiss=numeric(ncol(train)),stringsAsFactors = FALSE)
+
+for(i in 1:ncol(train)){
+  data_miss[i,1]<-colnames(train)[i]
+  data_miss[i,2]<-sum(is.na(train[,i]))
+  data_miss[i,3]<-data_miss[i,2]/nrow(train)
+}
+
+#remove variables with high missing values
+train
+train<-subset(train,select=-c(PctSomeCol18_24))
